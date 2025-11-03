@@ -591,7 +591,10 @@ inline void task2() {
   {
 
     // A COMPLETER
-
+    vitesse1 = CountIncr1 - lv1;
+    vitesse2 = CountIncr2 - lv2;
+    lv1 = CountIncr1;
+    lv2 = CountIncr2;
 
     tim2=tim2+del2 ;
   }
@@ -649,6 +652,10 @@ inline void task5() {
   { 
 
     // A COMPLETER EVENTUELLEMENT
+    servopos += servosens * servospeed;
+    if (servopos >= servomax || servopos <= servomin)
+        servosens = -servosens;   // on change dicection
+    frontServo.write(servopos);
 
     tim5=tim5+del5 ;
   }
