@@ -1,0 +1,46 @@
+graph LR
+    subgraph Vision
+        CAM(Camera Pi)
+    end
+
+    subgraph Compute
+        RPI[Raspberry Pi 3B+<br/>Python perception + decision]
+    end
+
+    subgraph Actuation
+        ARD[Arduino Romeo BLE<br/>serial_link.ino]
+        MOT[Moteurs DC + ponts H]
+        SERVO[Servomoteur + URM37]
+        IR[Capteur IR GP2Y0A21]
+        ENC[Encodeurs quadrature]
+    end
+
+    subgraph Supervision
+        ZMQ[Serveur ZMQ<br/>server.py]
+        CTRL[Poste de controle<br/>control.py]
+        ROBClient[Client robot<br/>robot.py]
+        VNC[VNC / SSH]
+    end
+
+    subgraph Power
+        BAT_LOGIQUE[Batterie 5V Varta<br/>logique + Raspberry]
+        BAT_MOTEUR[Batterie NiMH 6xAA<br/>DC jack moteurs]
+    end
+
+    CAM --> RPI
+    RPI -- USB / Serial --> ARD
+    ARD --> MOT
+    ARD --> SERVO
+    ARD --> IR
+    ARD --> ENC
+
+    CTRL --> ZMQ
+    ZMQ --> ROBClient
+    ROBClient --> RPI
+    VNC --> RPI
+
+    BAT_LOGIQUE --> RPI
+    BAT_MOTEUR --> MOT
+
+    RPI -. logs / telemetrie .-> ZMQ
+    ARD -. retours encodeurs / capteurs .-> RPI
