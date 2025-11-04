@@ -14,18 +14,22 @@ def write_i16(f, value):
     f.write(struct.pack('<h', value))
 
 
+def write_i32(f, value):
+    """Écrit un entier 32 bits (int32) au format little-endian"""
+    f.write(struct.pack('<l', value))
+
+
 def send_motor_command(arduino, left_speed, right_speed):
     """
     Envoie une commande aux moteurs
-    Protocole: 'C' + vitesse_gauche (int16) + vitesse_droite (int16) + 0 + 0
+    Protocole: 'C' + vitesse_gauche (int16) + vitesse_droite (int16) + dummy (int32)
     """
     print(f"Envoi commande: Gauche={left_speed}, Droite={right_speed}")
     
     arduino.write(b'C')
     write_i16(arduino, int(left_speed))
     write_i16(arduino, int(right_speed))
-    write_i16(arduino, 0)
-    write_i16(arduino, 0)
+    write_i32(arduino, 0)  # Paramètre dummy (int32)
     
     # Attente de l'acquittement
     rep = b''

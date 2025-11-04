@@ -171,14 +171,14 @@ def send_motor_command(arduino, left_speed, right_speed):
     """
     Envoie une commande aux moteurs
     Vitesses entre -255 et 255
-    Utilise le protocole binaire: commande 'C' + 4 int16
+    Utilise le protocole binaire: commande 'C' + 2 int16 + 1 int32
     """
-    # Protocole binaire: 'C' + vitesse_gauche + vitesse_droite + 0 + 0
+    # Protocole binaire conforme à DUALMOTOR_code() dans serial_link.ino:
+    # 'C' + vitesse_gauche (int16) + vitesse_droite (int16) + dummy (int32)
     arduino.write(b'C')
-    write_i16(arduino, int(left_speed))
-    write_i16(arduino, int(right_speed))
-    write_i16(arduino, 0)
-    write_i16(arduino, 0)
+    write_i16(arduino, int(left_speed))   # Moteur gauche
+    write_i16(arduino, int(right_speed))  # Moteur droit
+    write_i32(arduino, 0)                 # Paramètre dummy (non utilisé)
     
     # Attente de l'acquittement
     rep = b''
