@@ -226,10 +226,50 @@ python3 dialogue.py
 6. **`PROTOCOL_FIX.md`** (CE FICHIER)
    - Documentation de la correction
 
+## 🔧 CORRECTION CRITIQUE (4 nov 2025)
+
+### Erreur "ER" de l'Arduino
+
+**Symptôme** : Arduino répond "ER" au lieu de "OK", les moteurs ne bougent pas.
+
+**Cause** : Mauvaise lecture des paramètres !
+
+L'Arduino `DUALMOTOR_code()` attend :
+```cpp
+nivM1=GetInt(0);      // int16 (2 bytes)
+nivM2=GetInt(nivM1);  // int16 (2 bytes)
+GetLong(0);           // int32 (4 bytes) ← IMPORTANT !
+```
+
+Mais nous envoyions :
+```python
+write_i16(arduino, left_speed)   # 2 bytes ✓
+write_i16(arduino, right_speed)  # 2 bytes ✓
+write_i16(arduino, 0)            # 2 bytes ✗
+write_i16(arduino, 0)            # 2 bytes ✗
+# Total: 8 bytes mais structure incorrecte !
+```
+
+**Solution** : Envoyer un int32 au lieu de 2 int16 :
+```python
+write_i16(arduino, left_speed)   # 2 bytes ✓
+write_i16(arduino, right_speed)  # 2 bytes ✓
+write_i32(arduino, 0)            # 4 bytes ✓
+# Total: 8 bytes avec la bonne structure !
+```
+
+### Pourquoi test_moteurs.py fonctionnait ?
+
+`test_moteurs.py` envoie `4 × int16 = 8 bytes`, et l'Arduino lit `int16 + int16 + int32 = 8 bytes`.
+
+**Par chance**, les 8 bytes correspondent ! Les deux derniers int16 (4 bytes) sont lus comme un seul int32 (4 bytes) par l'Arduino. Mais ce n'est **pas correct** structurellement.
+
 ## ✅ Checklist de Validation
 
 - [x] Protocole binaire implémenté
 - [x] Fonction `write_i16()` utilisée
+- [x] Fonction `write_i32()` ajoutée ← NOUVEAU
+- [x] Structure correcte (2×int16 + 1×int32)
 - [x] Acquittement géré
 - [x] Arrêt des moteurs fonctionnel
 - [x] Test unitaire créé
