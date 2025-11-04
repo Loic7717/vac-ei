@@ -268,12 +268,11 @@ python3 demo.py
 
 ### Format des Commandes Arduino
 
-Le code suppose que l'Arduino accepte:
-```
-M L<vitesse_gauche> R<vitesse_droite>\n
-```
-
-Si votre Arduino utilise un autre format, modifiez la fonction `send_motor_command()` dans `dialogue.py`.
+Le système utilise le protocole binaire de `serial_link.ino` :
+- **Commande** : `'C'` (1 byte)
+- **Paramètres** : 4 × int16 (vitesse_gauche, vitesse_droite, 0, 0)
+- **Fonctions** : `write_i16()` pour encoder les entiers 16 bits
+- **Acquittement** : Attente de réponse sur `arduino.readline()`
 
 ### Éclairage
 

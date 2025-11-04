@@ -167,15 +167,13 @@ vcgencmd get_camera
    CORRECTION_FACTOR = 0.3  # Réduire
    ```
 
-### ❌ "Le robot perd la ligne dans les virages"
+### ❌ "L'Arduino ne répond pas"
 
 **Solutions:**
-1. Utiliser le profil `aggressive`
-2. Ou augmenter:
-   ```python
-   CORRECTION_FACTOR = 0.7  # Plus de correction
-   MIN_SPEED = 40           # Virages plus serrés
-   ```
+- Vérifiez le port série : `/dev/ttyACM0` (peut être `/dev/ttyUSB0`)
+- Vérifiez le baudrate : 115200
+- Testez avec le script : `python3 test_motor_commands.py`
+- Testez avec le mode "Dialogue direct"
 
 ## 📊 Commandes du Script de Démo
 

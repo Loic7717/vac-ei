@@ -101,12 +101,12 @@ resolution_target = (160, 128)
 
 ### Format des Commandes Arduino
 
-Assurez-vous que votre code Arduino (`serial_link.ino`) accepte les commandes au format :
-```
-M L<left_speed> R<right_speed>
-```
+Le système utilise le protocole binaire de `serial_link.ino` :
+- **Commande 'C'** : Contrôle des moteurs
+- **Format** : `'C'` + vitesse_gauche (int16) + vitesse_droite (int16) + 0 (int16) + 0 (int16)
+- **Vitesses** : -255 à 255 (négatif = marche arrière)
 
-Exemple : `M L100 R80` (avance en tournant légèrement à droite)
+Exemple : Commande `carAdvance(100, 80)` avance en tournant légèrement à droite
 
 ## Dépendances
 

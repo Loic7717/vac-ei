@@ -171,15 +171,20 @@ def send_motor_command(arduino, left_speed, right_speed):
     """
     Envoie une commande aux moteurs
     Vitesses entre -255 et 255
+    Utilise le protocole binaire: commande 'C' + 4 int16
     """
-    # Format de la commande à adapter selon le protocole de serial_link.ino
-    # Exemple: "M L100 R100" pour left=100, right=100
-    command = f"M L{left_speed} R{right_speed}\n"
-    arduino.write(command.encode('utf-8'))
-    time.sleep(0.01)
+    # Protocole binaire: 'C' + vitesse_gauche + vitesse_droite + 0 + 0
+    arduino.write(b'C')
+    write_i16(arduino, int(left_speed))
+    write_i16(arduino, int(right_speed))
+    write_i16(arduino, 0)
+    write_i16(arduino, 0)
     
-    # Lecture de la réponse
-    rep = arduino.readline()
+    # Attente de l'acquittement
+    rep = b''
+    while rep == b'':
+        rep = arduino.readline()
+    
     if rep:
         print(f"Arduino: {rep.decode().strip()}")
 
